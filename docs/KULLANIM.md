@@ -329,7 +329,104 @@ Ayrıca `.glb` ve `.html` dosyaları **aynı klasörde** durmalı.
 
 ---
 
-## 10. Dosya haritası
+## 10. Tüm binayı üretmek (`scripts/building.py`)
+
+`build3d.py` tek bir kat paftasını modeller. **Tüm bina** için `building.py`:
+
+```bash
+# bodrum + zemin + 8 normal kat = 10 kat, 30 m
+python scripts/building.py --out out/bina.glb
+
+# kat yüksekliklerini ayrı ayrı ver (cm)
+python scripts/building.py --normal-floors 8 \
+       --heights bodrum_kat=300,zemin_kat=320,normal_kat=300 --out out/bina.glb
+
+# sadece taşıyıcı + döşeme (kapı/pencere yok)
+python scripts/building.py --no-joinery --no-openings --out out/bina_kaba.glb
+
+# kat şemasını görmek için (model üretmeden)
+python scripts/building.py --list
+```
+
+### Dikey şema (her kat için)
+
+```
+z_base ───────────────  döşeme altı
+z_base + slab ────────  döşeme üstü / duvar tabanı
+z_base + height ──────  duvar tepesi (üst katın döşemesi buraya oturur)
+```
+
+En üste otomatik bir **çatı döşemesi** eklenir.
+
+### Sıva: her iki yüzde 2 cm
+
+`kavaklik_01.dxf` içindeki kapı bloklarından okundu:
+
+| Blok | `dvr_kaba` | `dvr_siva` | Fark |
+|---|---|---|---|
+| `kp_90` | 90 × 15 | 86 × 19 | en −4 cm, kalınlık **+4 cm** |
+| `kp_90_20` | 90 × 20 | 86 × 24 | en −4 cm, kalınlık **+4 cm** |
+| `kp_90_10` | 90 × 10 | 86 × 14 | en −4 cm, kalınlık **+4 cm** |
+
+Kodda uygulanan kural:
+
+```
+sıvalı duvar  = Bina_kontur − iç mekânlar      (odalar net yüzeye çizilir)
+kaba duvar    = sıvalı duvar.buffer(−2 cm)     (sıvayı soymak)
+sıva kabuğu   = sıvalı duvar − kaba duvar      (2 cm kılıf, ayrı parça)
+```
+
+`--plaster 2` ile değiştirilir. Kalınlığı 4 cm'in altında kalan duvar
+parçaları tamamen sıva sayılır (kaba listeye girmez).
+
+### Kapı ve pencereler
+
+| Parça | Kaynak | Nasıl |
+|---|---|---|
+| **boşluk** | `C_pencere`, `dvr_kaba`, `C_kapi` | duvardan CSG ile **çıkarılır**; derinlik ekseninde uzatılır ki duvarı tam delsin |
+| `kapı` | `dvr_kaba` + `C_kapi` | kanat: açıklık 4.5 cm'e inceltilir, 210 cm yüksekliğinde |
+| `pencere` | `C_pencere` | doğrama: 10 cm derinlik, denizlik 90 cm + 150 cm yükseklik |
+| `cam` | `C_pencere` | 1.2 cm cam, doğrama içinde |
+
+`--door-height` / `--sill` / `--window-height` / `--door-leaf` /
+`--window-frame` / `--glass` ile özelleştirilir (hepsi cm).
+
+### Şaftlar ve merdiven
+
+- `Asansör`, `C_baca`, `HavaBaca` planlarda **boşluk**tur → katı extrude
+  edilmez; etrafına **10 cm perde duvarı** örülür (`--shaft-wall`).
+- `Merdiven` / `Merd+Koridor` da boşluktur → duvardan çıkarılır, **doldurulmaz**.
+- `C_merdiven` dikdörtgenlerinden **basamak** üretilir: uzun kenarı ≥ 2.0 m
+  ve kısa kenarı ≤ 1.6 m olanlar uçuş sayılıp 28 cm adımlarla tırmanır.
+
+### Çıktı örneği (10 kat, 3.0 m kat, 20 cm döşeme)
+
+| Parça | Hacim m³ | Üçgen |
+|---|---|---|
+| döşeme | 1.269,7 | 1.108 |
+| duvar_kaba | 1.053,2 | 18.264 |
+| sıva | 300,1 | 34.208 |
+| kolon | 259,4 | 4.488 |
+| baca | 87,6 | 2.560 |
+| pencere | 52,3 | 2.208 |
+| perde_asansör | 50,6 | 640 |
+| merdiven | 46,0 | 1.680 |
+| kapı | 29,4 | 4.008 |
+| cam | 5,6 | 2.208 |
+
+Toplam **71.372 üçgen**, hepsi watertight, 19.1 × 38.6 × 30.2 m.
+
+## 11. Görünüş almak (PNG)
+
+`scripts/elevation.py` saf matplotlib ile çalışır — ekran (X11) **gerekmez**:
+
+```bash
+python scripts/elevation.py out/bina.glb --view iso   -o out/bina_iso.png
+python scripts/elevation.py out/bina.glb --view front -o out/bina_front.png
+python scripts/elevation.py out/bina.glb --view top   -o out/bina_top.png
+```
+
+## 12. Dosya haritası
 
 | Yol | Ne zaman açarsın |
 |---|---|
@@ -339,5 +436,8 @@ Ayrıca `.glb` ve `.html` dosyaları **aynı klasörde** durmalı.
 | `src/cad2d/dxfio.py` | birim/pafta tespiti mantığı |
 | `src/cad2d/solid.py` | shapely + manifold3d (duvar türetme, CSG) |
 | `src/cad2d/view.py` | trimesh → GLB + three.js HTML |
-| `scripts/build3d.py` | ana çalıştırılabilir; `VOID_LAYERS` ve `PARTS` burada |
+| `scripts/build3d.py` | tek kat paftası -> 3B; `VOID_LAYERS` ve `PARTS` burada |
+| `scripts/building.py` | **tüm bina**: kat istifleme, sıva, kapı/pencere |
+| `scripts/elevation.py` | GLB -> PNG görünüş (headless, matplotlib) |
+| `src/cad2d/building.py` | `Config`, `wall_layers`, `shell_polys`, `stair_polys`, `build_storey` |
 | `scripts/preview_dxf.py` | 2B PNG; `STYLE` sözlüğünde katman renkleri |

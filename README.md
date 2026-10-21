@@ -64,6 +64,20 @@ otomatik getirir.
     --bbox 12600,6000,18900,12000 -o out/plan_normal_kat.png
 ```
 
+## 🏢 Tüm bina (bodrum + zemin + 8 normal kat)
+
+```bash
+./.venv/bin/python scripts/building.py --out out/bina.glb
+./.venv/bin/python scripts/elevation.py out/bina.glb --view iso -o out/bina_iso.png
+```
+
+- **Sıva:** her iki yüzde 2 cm (`--plaster`) — `kaba duvar` ve `sıva` ayrı parça
+- **Kapı/pencere:** açıklıklar CSG ile oyulur, üstüne kanat/doğrama/cam katıları oturur
+- **Şaftlar:** asansör & baca içi boş **perde duvarı** (kuyu doldurulmaz)
+- **Merdiven:** `C_merdiven` uçuşlarından 28 cm adımlı basamak
+
+Ayrıntılar: [`docs/KULLANIM.md`](docs/KULLANIM.md) §10.
+
 `out/index.html` bir statik sunucu ile açıldığında her pafta için etkileşimli
 3B model sunar.
 

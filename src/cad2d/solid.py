@@ -187,7 +187,10 @@ def to_trimesh(m: m3d.Manifold, color: Sequence[float] = (0.75, 0.75, 0.78),
     faces = np.asarray(mesh.tri_verts, dtype=np.int64).reshape(-1, 3)
     if verts.shape[1] > 3:
         verts = verts[:, :3]
-    t = trimesh.Trimesh(vertices=verts, faces=faces, process=True)
+    # process=True farklı gövdelerin çakışan köşelerini birleştirip non-manifold
+    # kenar üretir (özellikle 2 cm sıva kabuğu gibi ince/çok parçalı
+    # geometride).  manifold3d çıktısı zaten doğru yönlüdür -> process=False.
+    t = trimesh.Trimesh(vertices=verts, faces=faces, process=False)
     rgba = np.tile([*color, 1.0], (len(t.vertices), 1))
     t.visual = trimesh.visual.ColorVisuals(mesh=t, vertex_colors=rgba)
     t.metadata["name"] = name
@@ -207,6 +210,32 @@ def slab(rings: Sequence[Ring], z0: float, height: float,
     return m
 
 
+def wall_polys(
+    contour: Sequence[Ring],
+    voids: Sequence[Ring],
+    unit_to_metre: float = 0.01,
+    min_wall_area: float = 0.05,
+) -> list[Polygon]:
+    """Dış konturdan iç boşlukları çıkarıp **sıvalı** duvar poligonlarını verir.
+
+    Planlarda oda poligonları net (sıvalı) yüzeye çizildiği için
+    ``kontur − iç mekânlar`` farkı **sıva dahil** duvarı verir.
+    """
+    outer = union_polygons(to_polygons(contour, unit_to_metre))
+    if not outer:
+        raise ValueError("dış kontur bulunamadı")
+    holes = union_polygons(to_polygons(voids, unit_to_metre))
+    if holes:
+        walls = _flatten_polygons(
+            unary_union(outer).difference(unary_union(holes)))
+    else:
+        walls = outer
+    walls = [p for p in walls if not p.is_empty and p.area >= min_wall_area]
+    if not walls:
+        raise ValueError("duvar poligonu kalmadı (iç boşluklar konturu tamamen kaplıyor)")
+    return walls
+
+
 def walls_from_contour(
     contour: Sequence[Ring],
     voids: Sequence[Ring],
@@ -215,7 +244,7 @@ def walls_from_contour(
     unit_to_metre: float = 0.01,
     min_wall_area: float = 0.05,
 ) -> tuple[m3d.Manifold, list[Polygon]]:
-    """Dış konturdan iç boşlukları çıkararak duvar gövdesi üretir.
+    """Dış konturdan iç boşlukları çıkararak **sıvalı** duvar gövdesi üretir.
 
     Args:
         contour: bina dış konturu (``Bina_kontur``)
@@ -223,22 +252,10 @@ def walls_from_contour(
         min_wall_area: bu alanın altındaki duvar parçaları atılır (m²)
 
     Returns:
-        (manifold, kullanılan duvar poligonları)
+        (manifold, kullanılan sıvalı duvar poligonları)
     """
-    outer = union_polygons(to_polygons(contour, unit_to_metre))
-    if not outer:
-        raise ValueError("dış kontur bulunamadı")
-    holes = union_polygons(to_polygons(voids, unit_to_metre))
-    if holes:
-        wall_polys = _flatten_polygons(
-            unary_union(outer).difference(unary_union(holes)))
-    else:
-        wall_polys = outer
-    wall_polys = [p for p in wall_polys
-                  if p.area >= min_wall_area and not p.is_empty]
-    if not wall_polys:
-        raise ValueError("duvar poligonu kalmadı (iç boşluklar konturu tamamen kaplıyor)")
-    m = extrude(wall_polys, height)
+    walls = wall_polys(contour, voids, unit_to_metre, min_wall_area)
+    m = extrude(walls, height)
     if z0:
         m = m.translate((0.0, 0.0, float(z0)))
-    return m, wall_polys
+    return m, walls

@@ -231,6 +231,7 @@ def write_index(
     path: str | Path,
     entries: Sequence[tuple[str, str, dict]],
     title: str = "Kat paftaları",
+    lead: str = "",
 ) -> Path:
     """``[(ad, glb_dosya_adı, {parça: renk}), ...]`` -> kart dizini HTML."""
     cards = ""
@@ -241,7 +242,10 @@ def write_index(
                               name=name, glb=glb, legend=leg)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(_INDEX.format(title=title, cards=cards), encoding="utf-8")
+    html = _INDEX.format(title=title, cards=cards)
+    if lead:
+        html = html.replace("</header>", f"</header>\n{lead}")
+    p.write_text(html, encoding="utf-8")
     return p
 
 
