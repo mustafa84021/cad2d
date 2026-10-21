@@ -1,4 +1,9 @@
 # 2B DXF -> 3B katı model hattı
+#
+# Test edilen sürümler (Python 3.11):
+#   ezdxf 1.4.5 · numpy 2.4.6 · shapely 2.2.0
+#   manifold3d 3.5.4 · trimesh 5.1.1 · matplotlib 3.11.2
+
 ezdxf>=1.4,<2          # DXF okuma/yazma (R12..R2018)
 numpy>=1.26            # sayısal altyapı
 shapely>=2.0           # 2B poligon temizleme / boolean / offset

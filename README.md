@@ -10,6 +10,24 @@ ezdxf  ──►  shapely  ──►  manifold3d  ──►  trimesh  ──► 
  okuma     boolean        (katı model)     birleştirme    (HTML izleyici)
 ```
 
+## 📖 Nasıl kullanacağım?
+
+**Adım adım kurulum ve kullanım → [`docs/KULLANIM.md`](docs/KULLANIM.md)**
+
+> ⚠️ `data/` ve `out/` klasörleri `.gitignore`'da: DXF dosyaları repo'ya
+> girmez, kendin `data/` içine koyarsın.
+
+Özet:
+
+```bash
+git checkout arena/d32255e4-cad2d && git pull
+python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt   # Windows: .\.venv\Scripts\pip
+cp kavaklik_01.dxf data/                # DXF'i koy
+./.venv/bin/python scripts/build3d.py --list          # paftaları gör
+./.venv/bin/python scripts/build3d.py --floor normal_kat --openings --out out/normal_kat.glb
+# -> out/normal_kat.html dosyasını tarayıcıda aç
+```
+
 ## Kurulum (VS Code)
 
 ```bash
