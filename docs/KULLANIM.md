@@ -210,8 +210,8 @@ Hepsi `build3d.py` içinde, **hepsi cm cinsinden**:
 | Parametre | Varsayılan | Ne yapar |
 |---|---|---|
 | `--wall-height` | `300` | Kat yüksekliği (300 cm = 3.0 m) |
-| `--slab` | `20` | Döşeme kalınlığı |
-| `--sill` | `90` | Pencere denizlik yüksekliği |
+| `--slab` | `20` | Döşeme kalınlığı (`build3d.py`; `building.py`'de **30**) |
+| `--sill` | `90` | Pencere denizlik yüksekliği (`building.py`'de **110**) |
 | `--window-height` | `150` | Pencere yüksekliği |
 | `--door-height` | `210` | Kapı yüksekliği |
 | `--openings` | kapalı | **Aç:** pencere/kapı boşluklarını duvardan CSG ile çıkar |
@@ -336,8 +336,21 @@ Ayrıca `.glb` ve `.html` dosyaları **aynı klasörde** durmalı.
 ```bash
 # bodrum + zemin + 8 normal kat = 10 kat, 30 m
 python scripts/building.py --out out/bina.glb
+```
 
-# kat yüksekliklerini ayrı ayrı ver (cm)
+Varsayılanlar (proje değerleri — `kavaklik_01`):
+
+| Ne | Değer |
+|---|---|
+| Kat yüksekliği (hepsi) | **300 cm** |
+| Asmolen döşeme | **30 cm** |
+| Pencere denizlik | **110 cm** |
+| Pencere yüksekliği | **150 cm** |
+| Kapı yüksekliği | **210 cm** |
+| Sıva (her iki yüzde) | **2 cm** |
+
+```bash
+# kat yüksekliklerini ayrı ayrı vermek istersen (cm)
 python scripts/building.py --normal-floors 8 \
        --heights bodrum_kat=300,zemin_kat=320,normal_kat=300 --out out/bina.glb
 
@@ -385,7 +398,7 @@ parçaları tamamen sıva sayılır (kaba listeye girmez).
 |---|---|---|
 | **boşluk** | `C_pencere`, `dvr_kaba`, `C_kapi` | duvardan CSG ile **çıkarılır**; derinlik ekseninde uzatılır ki duvarı tam delsin |
 | `kapı` | `dvr_kaba` + `C_kapi` | kanat: açıklık 4.5 cm'e inceltilir, 210 cm yüksekliğinde |
-| `pencere` | `C_pencere` | doğrama: 10 cm derinlik, denizlik 90 cm + 150 cm yükseklik |
+| `pencere` | `C_pencere` | doğrama: 10 cm derinlik, denizlik **110 cm** + 150 cm yükseklik |
 | `cam` | `C_pencere` | 1.2 cm cam, doğrama içinde |
 
 `--door-height` / `--sill` / `--window-height` / `--door-leaf` /
@@ -399,22 +412,33 @@ parçaları tamamen sıva sayılır (kaba listeye girmez).
 - `C_merdiven` dikdörtgenlerinden **basamak** üretilir: uzun kenarı ≥ 2.0 m
   ve kısa kenarı ≤ 1.6 m olanlar uçuş sayılıp 28 cm adımlarla tırmanır.
 
-### Çıktı örneği (10 kat, 3.0 m kat, 20 cm döşeme)
+### Çıktı örneği (10 kat · 300 cm kat · 30 cm asmolen · denizlik 110)
 
 | Parça | Hacim m³ | Üçgen |
 |---|---|---|
-| döşeme | 1.269,7 | 1.108 |
-| duvar_kaba | 1.053,2 | 18.264 |
-| sıva | 300,1 | 34.208 |
-| kolon | 259,4 | 4.488 |
-| baca | 87,6 | 2.560 |
+| döşeme | 1.904,6 | 1.108 |
+| duvar_kaba | 1.009,9 | 18.264 |
+| sıva | 287,6 | 34.208 |
+| kolon | 250,1 | 4.488 |
+| baca | 84,5 | 2.560 |
 | pencere | 52,3 | 2.208 |
-| perde_asansör | 50,6 | 640 |
+| perde_asansör | 48,8 | 640 |
 | merdiven | 46,0 | 1.680 |
 | kapı | 29,4 | 4.008 |
 | cam | 5,6 | 2.208 |
 
-Toplam **71.372 üçgen**, hepsi watertight, 19.1 × 38.6 × 30.2 m.
+Toplam **71.372 üçgen**, hepsi watertight, 19.1 × 38.6 × 30.3 m.
+
+Bir katın dikey kotları (örn. z_base = 6.00 m):
+
+```
+6.00 ── döşeme altı      (30 cm asmolen)
+6.30 ── döşeme üstü / duvar tabanı
+7.40 ── pencere denizliği (+110 cm)
+8.40 ── kapı üstü        (+210 cm)
+8.90 ── pencere üstü     (+150 cm)
+9.00 ── duvar tepesi     (net 270 cm)
+```
 
 ## 11. Görünüş almak (PNG)
 

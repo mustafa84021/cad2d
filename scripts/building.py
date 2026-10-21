@@ -69,12 +69,16 @@ def main() -> int:
                     help="kat yükseklikleri cm: bodrum_kat=300,zemin_kat=320,normal_kat=300")
     ap.add_argument("--default-height", type=float, default=300.0,
                     help="--heights ile verilmeyen katlar için yükseklik (cm)")
-    ap.add_argument("--slab", type=float, default=20.0, help="döşeme kalınlığı (cm)")
+    ap.add_argument("--slab", type=float, default=30.0,
+                    help="asmolen döşeme kalınlığı (cm)")
     ap.add_argument("--plaster", type=float, default=2.0,
                     help="her iki yüzdeki sıva kalınlığı (cm)")
-    ap.add_argument("--sill", type=float, default=90.0, help="denizlik yüksekliği (cm)")
-    ap.add_argument("--window-height", type=float, default=150.0, help="pencere y. (cm)")
-    ap.add_argument("--door-height", type=float, default=210.0, help="kapı y. (cm)")
+    ap.add_argument("--sill", type=float, default=110.0,
+                    help="pencere denizlik yüksekliği (cm)")
+    ap.add_argument("--window-height", type=float, default=150.0,
+                    help="pencere yüksekliği (cm)")
+    ap.add_argument("--door-height", type=float, default=210.0,
+                    help="kapı yüksekliği (cm)")
     ap.add_argument("--door-leaf", type=float, default=4.5, help="kapı kanadı (cm)")
     ap.add_argument("--window-frame", type=float, default=10.0, help="doğrama derinliği (cm)")
     ap.add_argument("--glass", type=float, default=1.2, help="cam kalınlığı (cm)")

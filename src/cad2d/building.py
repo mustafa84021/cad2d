@@ -188,9 +188,9 @@ def stair_polys(
 class Config:
     """Bina üretim ayarları (tüm uzunluklar metre)."""
 
-    slab: float = 0.20            # döşeme kalınlığı
+    slab: float = 0.30            # asmolen döşeme kalınlığı
     plaster: float = PLASTER      # her iki yüzde sıva
-    sill: float = 0.90            # pencere denizlik yüksekliği
+    sill: float = 1.10            # pencere denizlik yüksekliği
     window_height: float = 1.50   # pencere yüksekliği
     door_height: float = 2.10     # kapı yüksekliği
     door_leaf: float = 0.045      # kapı kanadı kalınlığı

@@ -71,6 +71,7 @@ otomatik getirir.
 ./.venv/bin/python scripts/elevation.py out/bina.glb --view iso -o out/bina_iso.png
 ```
 
+- **Ölçüler:** 300 cm kat · 30 cm asmolen döşeme · denizlik 110 cm · pencere 150 cm · kapı 210 cm
 - **Sıva:** her iki yüzde 2 cm (`--plaster`) — `kaba duvar` ve `sıva` ayrı parça
 - **Kapı/pencere:** açıklıklar CSG ile oyulur, üstüne kanat/doğrama/cam katıları oturur
 - **Şaftlar:** asansör & baca içi boş **perde duvarı** (kuyu doldurulmaz)
