@@ -51,6 +51,24 @@ olur, `--dxf` ile yolu verirsin.
 
 ## 3. Sanal ortam + bağımlılıklar
 
+### 🚀 Tek komut (önerilen)
+
+`setup.sh` / `setup.ps1` her şeyi yapar: `.venv` kurar, bağımlılıkları yükler,
+`data/` + `out/` klasörlerini açar ve `data/` içindeki DXF'in pafta listesini
+yazdırır.
+
+```bash
+# macOS / Linux / WSL / Git Bash
+./setup.sh
+```
+
+```powershell
+# Windows PowerShell
+.\setup.ps1
+```
+
+Elle kurmak istersen aşağıdaki adımları izle (aynı işi yapar).
+
 ### Windows (PowerShell)
 
 ```powershell

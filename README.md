@@ -21,7 +21,9 @@ ezdxf  ──►  shapely  ──►  manifold3d  ──►  trimesh  ──► 
 
 ```bash
 git checkout arena/d32255e4-cad2d && git pull
-python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt   # Windows: .\.venv\Scripts\pip
+
+./setup.sh          # Windows: .\setup.ps1   (venv + bağımlılıklar + data/ + out/)
+
 cp kavaklik_01.dxf data/                # DXF'i koy
 ./.venv/bin/python scripts/build3d.py --list          # paftaları gör
 ./.venv/bin/python scripts/build3d.py --floor normal_kat --openings --out out/normal_kat.glb
