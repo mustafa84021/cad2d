@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "venv kur",
+      "type": "shell",
+      "command": "python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "DXF analiz",
+      "type": "shell",
+      "command": "./.venv/bin/python scripts/audit_dxf.py data/kavaklik_01.dxf",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "2B plan önizleme",
+      "type": "shell",
+      "command": "./.venv/bin/python scripts/preview_dxf.py data/kavaklik_01.dxf -o out/preview.png",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "3B model üret (GLB)",
+      "type": "shell",
+      "command": "./.venv/bin/python scripts/build3d.py --dxf data/kavaklik_01.dxf --out out/model.glb",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Ara çıktılar
+out/
+build/
+
+# Kullanıcıya ait CAD verisi (repo'ya katılmaz)
+data/
+google_drive/
+
+# IDE
+.idea/
+*.swp
+.DS_Store

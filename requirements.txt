@@ -1,0 +1,7 @@
+# 2B DXF -> 3B katı model hattı
+ezdxf>=1.4,<2          # DXF okuma/yazma (R12..R2018)
+numpy>=1.26            # sayısal altyapı
+shapely>=2.0           # 2B poligon temizleme / boolean / offset
+manifold3d>=3.0        # CSG katı modelleme (extrude, boolean, hull)
+trimesh>=4.0           # mesh birleştirme, GLB/OBJ dışa aktarma, görselleştirme
+matplotlib>=3.8        # hızlı 2B plan önizlemesi (PNG)

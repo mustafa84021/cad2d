@@ -1,0 +1,56 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "DXF analiz (audit_dxf.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/audit_dxf.py",
+      "args": ["${workspaceFolder}/data/kavaklik_01.dxf"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "DXF derin analiz (analyze_deep.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/analyze_deep.py",
+      "args": ["${workspaceFolder}/data/kavaklik_01.dxf"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "2B plan önizleme (preview_dxf.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/preview_dxf.py",
+      "args": [
+        "${workspaceFolder}/data/kavaklik_01.dxf",
+        "-o",
+        "${workspaceFolder}/out/preview.png"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "2B -> 3B model üret (build3d.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/build3d.py",
+      "args": [
+        "--dxf",
+        "${workspaceFolder}/data/kavaklik_01.dxf",
+        "--floor",
+        "normal_kat",
+        "--out",
+        "${workspaceFolder}/out/model.glb"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
